@@ -3,6 +3,7 @@ package oop.ex3.crosswords;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Set;
 
@@ -22,8 +23,9 @@ public class MyCrossword implements Crossword {
 	protected MyCrosswordStructure structure;
 	
 	
-	protected ArrayList</*CrosswordPosition*/>[] charPosList = new ArrayList</**/>[26];
-	
+	//protected ArrayList</*CrosswordPosition*/>[] charPosList = new ArrayList</**/>[26];
+	private HashMap<Character, ArrayList<BoardPosition>> charPosList = 
+			new HashMap<Character, ArrayList<BoardPosition>>() ;  
 	
 	
 	// array to keep board status
@@ -101,37 +103,43 @@ public class MyCrossword implements Crossword {
 	}
 
 	private boolean possibleWord(String word){
-		
 		int offset = 0;
-		for (char c : word.toCharArray())
-			ArrayList<E> positions = charPosList[c - 'a' + 1];
-		
-			for /*סוג הפוזישן שלנו*/pos 
-			wordPossibleInPos(word, )
-			offset++;
-		
+		for (char c : word.toCharArray()){
+			ArrayList<BoardPosition> positions = charPosList.get(c);
+			for (BoardPosition pos : positions){
+				if (wordPossibleInPos(word, pos)){
+					return true;
+				}
+				offset++;
+			}
+		}
+		//iterate over the rest of the board
+		for (BoardPosition pos: structure.getFreeSlots()){
+			if (wordPossibleInPos(word, pos)){
+				return true;
+			}
+		}
 		return false;
 	}
 	
 	
-	private boolean wordPossibleInPos(String word,int x , int y ){
+	private boolean wordPossibleInPos(String word,BoardPosition pos){
 		// check vertical
 		
-		int i =x;
-		while (structure.getSlotType(/*crossword position*/ ) == SlotType.UNUSED_SLOT|| structure.getSlotContent(/*crossword position*/ )== word.toCharArray()[i-x]){
+		int i =pos.getX();
+		while (structure.getSlotType(pos) == SlotType.UNUSED_SLOT|| structure.getSlotContent(pos)== word.toCharArray()[i-pos.getX()]){
 			i++;
 		}
-		if (i == x + word.length())
+		if (i == pos.getX() + word.length())
 			return true;
 		
 		/// check horizontal
-		i =y;
-		while (structure.getSlotType(/*crossword position*/ ) == SlotType.UNUSED_SLOT|| structure.getSlotContent(/*crossword position*/ )== word.toCharArray()[i-y]){
+		i =pos.getY();
+		while (structure.getSlotType(pos) == SlotType.UNUSED_SLOT|| structure.getSlotContent(pos)== word.toCharArray()[i-pos.getY()]){
 			i++;
 		}
-		if (i == y + word.length())
+		if (i == pos.getY() + word.length())
 			return true;
-		
 		return false;
 		
 		

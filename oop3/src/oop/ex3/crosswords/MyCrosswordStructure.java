@@ -3,6 +3,7 @@ package oop.ex3.crosswords;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Scanner;
 
@@ -18,6 +19,7 @@ public class MyCrosswordStructure implements CrosswordStructure {
 	// corresponds to a row of the structure  
 	protected List<String> dataList = new ArrayList<String>();
 	protected char[][] data;
+	HashSet<BoardPosition> freeSlots;
 
 	/*
 	 * (non-Javadoc)
@@ -52,8 +54,10 @@ public class MyCrosswordStructure implements CrosswordStructure {
 		switch (this.dataList.get(pos.getY()).charAt(pos.getX())) {
 		case '_':
 			return SlotType.UNUSED_SLOT;
-		default:
+		case '#':
 			return SlotType.FRAME_SLOT;
+		default :
+			return SlotType.USED_SLOT;
 		}
 	}
 
@@ -76,11 +80,27 @@ public class MyCrosswordStructure implements CrosswordStructure {
 		
 		//Data array
 		data = new char[dataList.get(0).length()][dataList.size()];
-		int i = 0;
+		int lineNum = 0;
+		int charNum; 
 		for (String line : dataList){
-			data[i] = line.toCharArray();
-			i++;
+			charNum = 0;
+			for (char c: line.toCharArray()){
+				data[lineNum][charNum] = c;
+				if (c == '_'){
+					freeSlots.add(new BoardPosition(lineNum,charNum));
+				}
+			}
+			charNum++;
 		}
+		lineNum++;
+	}
+
+	public HashSet<BoardPosition> getFreeSlots() {
+		return freeSlots;
+	}
+
+	public char getSlotContent(BoardPosition pos) {
+		return data[pos.getX()][pos.getY()];
 	}
 
 }

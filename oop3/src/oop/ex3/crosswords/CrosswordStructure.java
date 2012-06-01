@@ -38,7 +38,7 @@ public interface CrosswordStructure {
 	 * Possible slot types.
 	 */
 	enum SlotType {
-		FRAME_SLOT, UNUSED_SLOT
+		FRAME_SLOT, UNUSED_SLOT,USED_SLOT
 	};
 
 	/**

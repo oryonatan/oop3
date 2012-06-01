@@ -8,6 +8,7 @@ public class MyDepthFirstSearch<B extends SearchBoardNode<M>, M extends SearchMo
 	private int topUQ;
 	private int topQualitySoFar = 0;
 	private B bestBoard;
+	private long endTime;
 	
 	@Override
 	public B search(B startBoard, int maxDepth, long timeOut) {
@@ -19,13 +20,13 @@ public class MyDepthFirstSearch<B extends SearchBoardNode<M>, M extends SearchMo
 			timeOut = Long.MAX_VALUE;
 		}
 		// DEBUG
-//		long initialTime = System.currentTimeMillis();		
+		endTime = System.currentTimeMillis() + timeOut;		
 		topUQ = startBoard.getQualityBound();
 		Iterator<M> iter = startBoard.getMovesIterator();
-		while (iter.hasNext()){
+		while (iter.hasNext() && System.currentTimeMillis() < endTime){
 			M move = iter.next();
 			startBoard.doMove(move);
-			explore(startBoard, maxDepth, timeOut);
+			explore(startBoard, maxDepth);
 			if (topQualitySoFar == topUQ) {
 				return bestBoard;
 			}
@@ -34,7 +35,7 @@ public class MyDepthFirstSearch<B extends SearchBoardNode<M>, M extends SearchMo
 		return bestBoard;
 	}		
 
-	public void explore(B startBoard, int maxDepth, long timeOut) {
+	public void explore(B startBoard, int depthLeft) {
 		int curQuality = startBoard.getQuality();
 		if (topQualitySoFar < curQuality){
 			topQualitySoFar = curQuality;
@@ -49,13 +50,16 @@ public class MyDepthFirstSearch<B extends SearchBoardNode<M>, M extends SearchMo
 		}
 		
 		Iterator<M> iter = startBoard.getMovesIterator();
-		while (iter.hasNext()) {
+		if (depthLeft <= 0) return;
+		while (iter.hasNext() && System.currentTimeMillis() < endTime ) {
 			M move = iter.next();
 			startBoard.doMove(move);
-			explore(startBoard, maxDepth, timeOut);
+			explore(startBoard, depthLeft-1);
 			startBoard.undoMove(move);
 		}
-		return;
+
+
+
 
 	}
 
