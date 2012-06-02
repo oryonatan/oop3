@@ -18,7 +18,7 @@ public class MyCrosswordStructure implements CrosswordStructure {
 	// Stores the crossword structure, each element in the list 
 	// corresponds to a row of the structure  
 	protected List<String> dataList = new ArrayList<String>();
-	protected char[][] data;
+	protected charCounter[][] data;
 	HashSet<BoardPosition> freeSlots;
 
 	/*
@@ -79,13 +79,13 @@ public class MyCrosswordStructure implements CrosswordStructure {
 		}
 		
 		//Data array
-		data = new char[dataList.get(0).length()][dataList.size()];
+		data = new charCounter[dataList.get(0).length()][dataList.size()];
 		int lineNum = 0;
 		int charNum; 
 		for (String line : dataList){
 			charNum = 0;
 			for (char c: line.toCharArray()){
-				data[lineNum][charNum] = c;
+				data[lineNum][charNum] = new charCounter(c);
 				if (c == '_'){
 					freeSlots.add(new BoardPosition(lineNum,charNum));
 				}
@@ -100,7 +100,43 @@ public class MyCrosswordStructure implements CrosswordStructure {
 	}
 
 	public char getSlotContent(BoardPosition pos) {
-		return data[pos.getX()][pos.getY()];
+		return data[pos.getX()][pos.getY()].getCharecter();
+	}
+
+	public void addEntry(CrosswordEntry move) {
+		
+		BoardPosition position = (BoardPosition) move.getPosition();
+		int x = position.getX();
+		int y = position.getY();
+		String word = move.getTerm();
+		
+		if (position.isVertical())
+		{
+			for (int i = 0 ; i< word.length(); i++)
+				data[x][y + i].update(word.toCharArray()[i]);
+		}
+		else {
+			for (int i = 0 ; i< word.length(); i++)
+				data[x + i][y].update(word.toCharArray()[i]);
+		}
+		
+	}
+
+	public void removeEntry(CrosswordEntry move) {
+		BoardPosition position = (BoardPosition) move.getPosition();
+		int x = position.getX();
+		int y = position.getY();
+		String word = move.getTerm();
+		
+		if (position.isVertical())
+		{
+			for (int i = 0 ; i< word.length(); i++)
+				data[x][y + i].removeChar();
+		}
+		else {
+			for (int i = 0 ; i< word.length(); i++)
+				data[x + i][y].removeChar();
+		}
 	}
 
 }

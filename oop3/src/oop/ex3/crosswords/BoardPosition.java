@@ -67,5 +67,11 @@ public class BoardPosition implements CrosswordPosition , Comparable<BoardPositi
 		return compared ;
 	}
 	
+	public boolean equals(BoardPosition other){
+		if(compareTo(other) == 0){
+			return true;
+		}
+		return false;
+	}
 
 }
