@@ -12,20 +12,16 @@ public class BoardPosition implements CrosswordPosition , Comparable<BoardPositi
 		this.y = from.getY();
 	}
 	
-	public void moveLeft(int offset) throws OutOfBoardException{
-		if (x - offset < 0 ){
-			throw new OutOfBoardException();
-		}
+	public void moveLeft(int offset)  {
+
 		this.x -=offset;
 	}
-	public void moveUp(int offset) throws OutOfBoardException{
-		if (y - offset < 0 ){
-			throw new OutOfBoardException();
-		}
+	public void moveUp(int offset)  {
+
 		this.y -=offset;
 	}
 	
-	public void moveInDirection(int offset,boolean direction) throws OutOfBoardException{
+	public void moveInDirection(int offset,boolean direction){
 		if (direction == VERTICAL){
 			moveUp(offset);
 		}

@@ -12,15 +12,9 @@ public class MyDepthFirstSearch<B extends SearchBoardNode<M>, M extends SearchMo
 	
 	@Override
 	public B search(B startBoard, int maxDepth, long timeOut) {
-		// DEBUG
-		boolean isDebug = java.lang.management.ManagementFactory
-				.getRuntimeMXBean().getInputArguments().toString()
-				.indexOf("-agentlib:jdwp") > 0;
-		if (isDebug) {
-			timeOut = Long.MAX_VALUE;
-		}
-		// DEBUG
-		endTime = System.currentTimeMillis() + timeOut;		
+
+//		endTime = System.currentTimeMillis() + timeOut;		
+		endTime =  Long.MAX_VALUE;
 		topUQ = startBoard.getQualityBound();
 		Iterator<M> iter = startBoard.getMovesIterator();
 		while (iter.hasNext() && System.currentTimeMillis() < endTime){
@@ -40,6 +34,9 @@ public class MyDepthFirstSearch<B extends SearchBoardNode<M>, M extends SearchMo
 		if (topQualitySoFar < curQuality){
 			topQualitySoFar = curQuality;
 			bestBoard = (B) startBoard.getCopy();
+		}
+		if (topQualitySoFar == topUQ) {
+			return;
 		}
 		
 		if (curQuality == topUQ) {

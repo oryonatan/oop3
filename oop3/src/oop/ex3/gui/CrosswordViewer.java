@@ -88,7 +88,7 @@ public class CrosswordViewer extends JFrame implements ActionListener,
 			return;
 		} catch (Exception e) {
 			System.err.println("Exception during crossword creation!" + e);
-			//e.printStackTrace();
+			e.printStackTrace();
 			return;
 		}
 		if (args.length != 4) { 

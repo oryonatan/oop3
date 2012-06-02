@@ -19,7 +19,8 @@ public class MyCrosswordStructure implements CrosswordStructure {
 	// corresponds to a row of the structure  
 	protected List<String> dataList = new ArrayList<String>();
 	protected charCounter[][] data;
-	HashSet<BoardPosition> freeSlots;
+	HashSet<BoardPosition> freeSlots = new HashSet<BoardPosition>();
+
 
 	/*
 	 * (non-Javadoc)
@@ -79,7 +80,7 @@ public class MyCrosswordStructure implements CrosswordStructure {
 		}
 		
 		//Data array
-		data = new charCounter[dataList.get(0).length()][dataList.size()];
+		data = new charCounter[dataList.size()][dataList.get(0).length()];
 		int lineNum = 0;
 		int charNum; 
 		for (String line : dataList){
@@ -87,12 +88,13 @@ public class MyCrosswordStructure implements CrosswordStructure {
 			for (char c: line.toCharArray()){
 				data[lineNum][charNum] = new charCounter(c);
 				if (c == '_'){
-					freeSlots.add(new BoardPosition(lineNum,charNum));
+					freeSlots.add(new BoardPosition(charNum,lineNum));
 				}
+				charNum++;
 			}
-			charNum++;
+			lineNum++;	
 		}
-		lineNum++;
+		
 	}
 
 	public HashSet<BoardPosition> getFreeSlots() {
@@ -100,7 +102,7 @@ public class MyCrosswordStructure implements CrosswordStructure {
 	}
 
 	public char getSlotContent(BoardPosition pos) {
-		return data[pos.getX()][pos.getY()].getCharecter();
+		return data[pos.getY()][pos.getX()].getCharecter();
 	}
 
 	public void addEntry(CrosswordEntry move) {
@@ -113,14 +115,14 @@ public class MyCrosswordStructure implements CrosswordStructure {
 		if (position.isVertical())
 		{
 			for (int i = 0 ; i< word.length(); i++){
-				data[x][y + i].update(word.toCharArray()[i]);
+				data[y + i][x].update(word.toCharArray()[i]);
 				freeSlots.remove(new BoardPosition(x, y+i));
 			}
 		}
 		else {
 			for (int i = 0 ; i< word.length(); i++)
 			{
-				data[x + i][y].update(word.toCharArray()[i]);
+				data[y][x + i].update(word.toCharArray()[i]);
 				freeSlots.add(new BoardPosition(x+i, y));
 			}
 		}
@@ -136,13 +138,13 @@ public class MyCrosswordStructure implements CrosswordStructure {
 		if (position.isVertical())
 		{
 			for (int i = 0 ; i< word.length(); i++)
-				if (data[x][y + i].removeChar() == 0 ){
+				if (data[y + i][x].removeChar() == 0 ){
 					freeSlots.add(new BoardPosition(x, y+i));
 				}
 		}
 		else {
 			for (int i = 0 ; i< word.length(); i++)
-				if(data[x + i][y].removeChar() == 0){
+				if(data[y][x + i].removeChar() == 0){
 					freeSlots.add(new BoardPosition(x+i, y));
 				}
 		}
