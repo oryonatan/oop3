@@ -51,7 +51,7 @@ public class MyCrosswordStructure implements CrosswordStructure {
 				pos.getY() >= getHeight() || pos.getY() < 0)
 			return SlotType.FRAME_SLOT;
 		
-		switch (this.dataList.get(pos.getY()).charAt(pos.getX())) {
+		switch (this.data[pos.getY()][pos.getX()].getCharecter()) {
 		case '_':
 			return SlotType.UNUSED_SLOT;
 		case '#':
@@ -112,12 +112,17 @@ public class MyCrosswordStructure implements CrosswordStructure {
 		
 		if (position.isVertical())
 		{
-			for (int i = 0 ; i< word.length(); i++)
+			for (int i = 0 ; i< word.length(); i++){
 				data[x][y + i].update(word.toCharArray()[i]);
+				freeSlots.remove(new BoardPosition(x, y+i));
+			}
 		}
 		else {
 			for (int i = 0 ; i< word.length(); i++)
+			{
 				data[x + i][y].update(word.toCharArray()[i]);
+				freeSlots.add(new BoardPosition(x+i, y));
+			}
 		}
 		
 	}
@@ -131,11 +136,15 @@ public class MyCrosswordStructure implements CrosswordStructure {
 		if (position.isVertical())
 		{
 			for (int i = 0 ; i< word.length(); i++)
-				data[x][y + i].removeChar();
+				if (data[x][y + i].removeChar() == 0 ){
+					freeSlots.add(new BoardPosition(x, y+i));
+				}
 		}
 		else {
 			for (int i = 0 ; i< word.length(); i++)
-				data[x + i][y].removeChar();
+				if(data[x + i][y].removeChar() == 0){
+					freeSlots.add(new BoardPosition(x+i, y));
+				}
 		}
 	}
 

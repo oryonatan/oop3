@@ -13,12 +13,13 @@ public class charCounter {
 		this.setCharecter('#');
 	}
 	
-	public void removeChar()
+	public int removeChar()
 	{
 		if (counter > 0)
 			counter--;
 		else
 			setCharecter('_');
+		return counter;
 	}
 	public char getCharecter() {
 		return charecter;
@@ -27,7 +28,7 @@ public class charCounter {
 		this.charecter = charecter;
 	}
 	
-	public void update(char c)
+	public int update(char c)
 	{
 		if (c == charecter)
 			counter++;
@@ -36,5 +37,7 @@ public class charCounter {
 			charecter = c;
 			counter = 1;
 		}
+		return counter;
 	}
+	
 }
