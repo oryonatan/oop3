@@ -2,6 +2,8 @@ package oop.ex3.crosswords;
 
 public class BoardPosition implements CrosswordPosition , Comparable<BoardPosition> {
 
+	private static final boolean VERTICAL = true;
+	private static final boolean HORIZONTAL = false;
 	private int x, y;
 	private boolean isVertical;
 	
@@ -21,6 +23,15 @@ public class BoardPosition implements CrosswordPosition , Comparable<BoardPositi
 			throw new OutOfBoardException();
 		}
 		this.y -=offset;
+	}
+	
+	public void moveInDirection(int offset,boolean direction) throws OutOfBoardException{
+		if (direction == VERTICAL){
+			moveUp(offset);
+		}
+		else{
+			moveLeft(offset);
+		}
 	}
 	
 	
