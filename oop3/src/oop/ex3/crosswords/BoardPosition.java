@@ -63,8 +63,9 @@ public class BoardPosition implements CrosswordPosition , Comparable<BoardPositi
 		return compared ;
 	}
 	
-	public boolean equals(BoardPosition other){
-		if(compareTo(other) == 0){
+	@Override
+	public boolean equals(Object other){
+		if(compareTo((BoardPosition) other) == 0){
 			return true;
 		}
 		return false;

@@ -5,11 +5,11 @@ public class charCounter {
 	private char charecter ;
 	
 	public charCounter(char c) {
-		// TODO Auto-generated constructor stub
+
 		this.setCharecter(c);
 	}
 	public charCounter() {
-		// TODO Auto-generated constructor stub
+
 		this.setCharecter('#');
 	}
 	
@@ -17,7 +17,7 @@ public class charCounter {
 	{
 		if (counter > 0)
 			counter--;
-		else
+		if (counter==0)
 			setCharecter('_');
 		return counter;
 	}

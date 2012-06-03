@@ -112,15 +112,15 @@ public class MyCrossword implements Crossword {
 
 		BoardPosition pos = new BoardPosition((BoardPosition) move.getPosition());
 		String word = move.getTerm();
-		boolean direction = pos.isVertical();
+		boolean direction = move.getPosition().isVertical();
 
 		for (char c : word.toCharArray()) {
 			if (ifAdd)
-				charPosList.get(c).add(pos);
+				charPosList.get(c).add(new BoardPosition(pos));
 			else
-				charPosList.get(c).remove(pos);
+				charPosList.get(c).remove(new BoardPosition(pos));
 
-				pos.moveInDirection(-1, direction);
+			pos.moveInDirection(-1, direction);
 
 		}
 
@@ -162,12 +162,13 @@ public class MyCrossword implements Crossword {
 			ArrayList<BoardPosition> positions = charPosList.get(c);
 			if (null != positions) {
 				for (BoardPosition pos : positions) {
-					if (wordPossibleInPos(word, pos, offset)) {
+					if (wordPossibleInPos(word, new BoardPosition(pos), offset)) {
 						return true;
 					}
-					offset++;
+					
 				}
 			}
+			offset++;
 		}
 		// iterate over the rest of the board
 		for (BoardPosition pos : structure.getFreeSlots()) {
@@ -191,7 +192,9 @@ public class MyCrossword implements Crossword {
 			int overlaping = 0;
 
 			for (i = word.length() - 1; i >= 0; i--) {
-				if (structure.getSlotType(curPosition) == SlotType.UNUSED_SLOT) {
+				if (structure.getSlotType(curPosition) == SlotType.FRAME_SLOT) 
+					return null;
+				else if (structure.getSlotType(curPosition) == SlotType.UNUSED_SLOT) {
 					curPosition.moveInDirection(1, direction);
 					continue;
 				} else if (structure.getSlotContent(curPosition) == 
@@ -233,8 +236,7 @@ public class MyCrossword implements Crossword {
 		private String currentWord;
 
 		BoardIterator() {
-			TreeSet<String> wordsTreeSet = new TreeSet<String>(
-					new WordsComperator());
+			TreeSet<String> wordsTreeSet = new TreeSet<String>(new WordsComperator());
 			wordsTreeSet.addAll(potentialWords);
 			wordIterator = wordsTreeSet.iterator();
 			if (wordIterator.hasNext())
@@ -277,8 +279,7 @@ public class MyCrossword implements Crossword {
 
 		private Iterator<MyCrosswordEntry> getWordEntries() {
 
-			TreeSet<MyCrosswordEntry> entriesTree = new TreeSet<MyCrosswordEntry>(
-					new EntryComperator());
+			TreeSet<MyCrosswordEntry> entriesTree = new TreeSet<MyCrosswordEntry>(new EntryComperator());
 			int offset = 0;
 			MyCrosswordEntry entry;
 
@@ -295,22 +296,25 @@ public class MyCrossword implements Crossword {
 						if (null != entry) {
 							entriesTree.add(entry);
 						}
-						offset++;
+						
 					}
+					offset++;
 				}
 			}
 			// iterate over the rest of the board
 			for (BoardPosition pos : structure.getFreeSlots()) {
-				entry = wordPossibleInPos(word, pos, offset, VERTICAL);
+				entry = wordPossibleInPos(word, pos, 0, VERTICAL);
 				if (null != entry) {
 					entriesTree.add(entry);
 				}
-				entry = wordPossibleInPos(word, pos, offset, HORIZONTAL);
+				entry = wordPossibleInPos(word, pos, 0, HORIZONTAL);
 				if (null != entry) {
 					entriesTree.add(entry);
 				}
 			}
-
+			/*for (CrosswordEntry ent : entriesTree) {
+				System.out.println(ent.getTerm() + " x: " + ent.getPosition().getX() + " y: " +ent.getPosition().getY());
+			}*/
 			return entriesTree.iterator();
 		}
 

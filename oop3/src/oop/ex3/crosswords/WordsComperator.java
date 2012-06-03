@@ -4,8 +4,8 @@ import java.util.Comparator;
 
 public class WordsComperator implements Comparator<String> {
 
-	private static final int FIRST_BIGGER = 1;
-	private static final int SECOND_BIGGER = -1;
+	private static final int FIRST_BIGGER = -1;
+	private static final int SECOND_BIGGER = 1;
 
 	@Override
 	public int compare(String firstWord, String secondWord) {

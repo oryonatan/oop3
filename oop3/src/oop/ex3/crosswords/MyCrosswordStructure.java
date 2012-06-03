@@ -19,7 +19,7 @@ public class MyCrosswordStructure implements CrosswordStructure {
 	// corresponds to a row of the structure  
 	protected List<String> dataList = new ArrayList<String>();
 	protected charCounter[][] data;
-	HashSet<BoardPosition> freeSlots = new HashSet<BoardPosition>();
+	ArrayList<BoardPosition> freeSlots = new ArrayList<BoardPosition>();
 
 
 	/*
@@ -85,7 +85,7 @@ public class MyCrosswordStructure implements CrosswordStructure {
 		int charNum; 
 		for (String line : dataList){
 			charNum = 0;
-			for (char c: line.toCharArray()){
+			for (char c: line.trim().toCharArray()){
 				data[lineNum][charNum] = new charCounter(c);
 				if (c == '_'){
 					freeSlots.add(new BoardPosition(charNum,lineNum));
@@ -97,7 +97,7 @@ public class MyCrosswordStructure implements CrosswordStructure {
 		
 	}
 
-	public HashSet<BoardPosition> getFreeSlots() {
+	public ArrayList<BoardPosition> getFreeSlots() {
 		return freeSlots;
 	}
 
@@ -123,7 +123,7 @@ public class MyCrosswordStructure implements CrosswordStructure {
 			for (int i = 0 ; i< word.length(); i++)
 			{
 				data[y][x + i].update(word.toCharArray()[i]);
-				freeSlots.add(new BoardPosition(x+i, y));
+				freeSlots.remove(new BoardPosition(x+i, y));
 			}
 		}
 		

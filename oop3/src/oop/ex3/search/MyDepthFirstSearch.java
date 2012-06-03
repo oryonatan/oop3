@@ -13,8 +13,8 @@ public class MyDepthFirstSearch<B extends SearchBoardNode<M>, M extends SearchMo
 	@Override
 	public B search(B startBoard, int maxDepth, long timeOut) {
 
-//		endTime = System.currentTimeMillis() + timeOut;		
-		endTime =  Long.MAX_VALUE;
+		endTime = System.currentTimeMillis() + timeOut;		
+		//endTime =  Long.MAX_VALUE;
 		topUQ = startBoard.getQualityBound();
 		Iterator<M> iter = startBoard.getMovesIterator();
 		while (iter.hasNext() && System.currentTimeMillis() < endTime){
