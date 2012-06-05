@@ -37,5 +37,7 @@ public interface CrosswordEntry extends SearchMove {
 	 * @return number of letters of the term.
 	 */
 	public int getLength();
+
+
 		
 }
