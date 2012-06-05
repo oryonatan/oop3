@@ -16,21 +16,11 @@ public class MyCrossword implements Crossword {
 	private static final String ABC = "abcdefghijklmnopqrstuvwxyz";
 	private static final boolean ADD = true;
 	private static final boolean REMOVE = false;
-	// Grid size
-	// protected MyCrosswordStructure myStruct;
-	protected ArrayList<CrosswordEntry> usedWords = new ArrayList<CrosswordEntry>();
-	protected ArrayList<String> unUsedWords = new ArrayList<String>();
-	private HashSet<CrosswordPosition> startingTiles = new HashSet<CrosswordPosition>();
-	protected ArrayList<String> potentialWords;
-
-	protected MyCrosswordStructure structure;
-
-	// protected ArrayList</*CrosswordPosition*/>[] charPosList = new
-	// ArrayList</**/>[26];
+	private HashSet<CrosswordEntry> usedWords;
+	private HashSet<String> unUsedWords;
+	private HashSet<String> potentialWords;
+	private MyCrosswordStructure structure;
 	private HashMap<Character, ArrayList<BoardPosition>> charPosList;
-
-	// array to keep board status
-	protected int fillboard[][];
 	private CrosswordGlossary glossary;
 	private int topQuality;
 
@@ -39,9 +29,8 @@ public class MyCrossword implements Crossword {
 	 * 
 	 */
 	public MyCrossword() {
-		usedWords = new ArrayList<CrosswordEntry>();
-		unUsedWords = new ArrayList<String>();
-		startingTiles = new HashSet<CrosswordPosition>();
+		usedWords = new HashSet<CrosswordEntry>();
+		unUsedWords = new HashSet<String>();
 		initializeCharPosLists();
 	}
 
@@ -51,8 +40,9 @@ public class MyCrossword implements Crossword {
 	 * @param crosswordEntries
 	 *            list of enteries to copy
 	 */
-	public MyCrossword(Collection<CrosswordEntry> crosswordEntries) {
-		this.usedWords = new ArrayList<CrosswordEntry>();
+	public MyCrossword(Collection<CrosswordEntry> crosswordEntries,int topQuality) {
+		this.topQuality= topQuality;
+		this.usedWords = new HashSet<CrosswordEntry>();
 		this.usedWords.addAll(crosswordEntries);
 	}
 
@@ -111,7 +101,7 @@ public class MyCrossword implements Crossword {
 	@Override
 	public int getQualityBound() {
 		// Iterate over all the words and find which one is potetially usable
-		potentialWords = new ArrayList<String>();
+		potentialWords = new HashSet<String>();
 		int counter = getQuality();
 		for (String word : unUsedWords) {
 			if (possibleWord(word))
@@ -131,7 +121,6 @@ public class MyCrossword implements Crossword {
 		structure.addEntry(move);
 		unUsedWords.remove(move.getTerm());
 		usedWords.add(move);
-		startingTiles.add(move.getPosition());
 		updateCharPositionList(move, ADD);
 	}
 
@@ -146,8 +135,6 @@ public class MyCrossword implements Crossword {
 		structure.removeEntry(move);
 		unUsedWords.add(move.getTerm());
 		usedWords.remove(move);
-		startingTiles.remove(move.getPosition());
-
 	}
 
 	/**
@@ -183,7 +170,7 @@ public class MyCrossword implements Crossword {
 	 */
 	@Override
 	public SearchBoardNode<CrosswordEntry> getCopy() {
-		return new MyCrossword(getCrosswordEntries());
+		return new MyCrossword(getCrosswordEntries(),topQuality);
 	}
 
 	/*
@@ -194,8 +181,14 @@ public class MyCrossword implements Crossword {
 	 */
 	@Override
 	public void attachGlossary(CrosswordGlossary glossary) {
+		//If the structure  already exist - calculate it's max quality , and set the best 
+		//Solution to the minimal of the glossary max quality and the structure
 		this.glossary = glossary;
-		this.topQuality = countChars(glossary.getTerms());
+		int freeSlotsCounter = Integer.MAX_VALUE;
+		if(null!=structure){
+			freeSlotsCounter = structure.getFreeSlots().size();
+		}
+		this.topQuality = Math.min(countChars(glossary.getTerms()),freeSlotsCounter);
 		unUsedWords.addAll(glossary.getTerms());
 	}
 
@@ -222,7 +215,15 @@ public class MyCrossword implements Crossword {
 	 */
 	@Override
 	public void attachStructure(CrosswordStructure structure) {
+		//If the glossary already exist - calculate it's max quality , and set the best 
+		//Solution to the minimal of the glossary max quality and the structure
+		int glossaryTop = Integer.MAX_VALUE;
+		if(null!=glossary){
+			glossaryTop = countChars(glossary.getTerms());
+		}
 		this.structure = (MyCrosswordStructure) structure;
+		this.topQuality = Math.min(glossaryTop,
+				((MyCrosswordStructure)structure).getFreeSlots().size());
 	}
 
 	/*
@@ -310,8 +311,11 @@ public class MyCrossword implements Crossword {
 		curPosition.moveInDirection(-1, direction);
 		if (i < 0) {
 			curPosition.setOrientation(direction);
-			if (startingTiles.contains(curPosition)) {
-				return null;
+			//Check if a word position is allready taken.
+			for(CrosswordEntry entry :usedWords ){
+				if (entry.getPosition()  == curPosition){
+					return null;
+				}
 			}
 			// if the word is succesfully inseartable - return an entry of
 			// setting the word in the location

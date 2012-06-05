@@ -1,5 +1,6 @@
 package oop.ex3.crosswords;
 
+
 /**
  * Represents a board position
  * 
@@ -143,5 +144,4 @@ public class BoardPosition implements CrosswordPosition,
 		}
 		return false;
 	}
-
 }
